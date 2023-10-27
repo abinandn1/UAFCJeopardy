@@ -32,19 +32,23 @@ def scrape_questions():
 def scrape_answers():
     answers_list = []
 
-    #Generate request and parse webpage
+    # Generate request and parse webpage
     url = "https://thoughtcatalog.com/january-nelson/2020/04/multiple-choice-trivia-questions-and-answers/"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Find the section in the webpage that contains the correct answers 
-    answers = soup.find_all('p', text=re.compile(r'^\d+\.')) # used to find items in <p> sections that match what we are looking for 
+    # Find the section in the webpage that contains the correct answers
+    answers = soup.find_all('p', text=re.compile(r'^\d+\.'))  # Using a regular expression to match entries starting with numbers and a period
+
     for answer in answers:
-        if "Trivia Question:" in answer.text.strip(): #remove the trivia questions being added to the correct answers list
-            next
+        answer_text = answer.text.strip()
+        if "Trivia Question:" in answer_text:  # Remove trivia questions
+            continue
         else:
-            answers_list.append(answer.text.strip())
-    
+            # Remove numbers and the period at the end using regular expressions
+            cleaned_answer = re.sub(r'^\d+\.\s*', '', answer_text)
+            answers_list.append(cleaned_answer)
+
     return answers_list
 
 def main():
@@ -53,8 +57,8 @@ def main():
     answers = scrape_answers()
 
     # Print out the data we scraped
-    print(str(questions) + "\n")
-    print(answers)
+    #print(str(questions) + "\n")
+    #print(answers)
 
 
 main()
