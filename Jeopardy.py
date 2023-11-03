@@ -2,14 +2,15 @@ import time
 import tkinter as tk # Used to create game interface.
 from tkinter import messagebox
 from bs4 import BeautifulSoup
-from webscraping import scrape_questions,scrape_answers
+from webscraping import scrape_questions_and_answers
 import random #to allow for randomization of questions pulled for a Jeopardy game 
 ###############################################################################
 #    CONSTANTS:
 ###############################################################################
 
 #bring in webscraping data
-questions_and_choices = scrape_questions() # only 23 questions for this, since website that I am scraping from is weird 
+#oct 31:
+webscraping_data = scrape_questions_and_answers()
 
 GAME_DIMENSION = 700 # need to adjust this so that all text and stuff is displayed properly 
 BUTTONS_PER_LINE = 5
@@ -40,10 +41,7 @@ BUTTON_NAMES = ['$100',
                 '$400',
                 '$500']
 
-# Define messages to be presented when each button is clicked.
-
-
-# or i can use the BUTTONS_PER_LINE const
+# Define questions to be presented when each button is clicked.
 
 QUESTIONS = [['Question 1',
              'Question 2',
@@ -107,8 +105,17 @@ ANSWER_CHOICES = [[["choice1","choice2","choice3","choice4"],
 # choices = list(shuffled_data.values())
 #----
 
-questions = list(questions_and_choices.keys())
-choices = list(questions_and_choices.values())
+#oct 31
+#questions = list(webscraping_data.keys())
+#choices = list(webscraping_data.values())
+questions = list()
+choices = list()
+answers_list = list()
+for question, answers in webscraping_data.items():
+    questions.append(question)
+    choices.append(answers[0])
+    if answers[1]:
+        answers_list.append(answers[1][0])
 
 total_questions = len(questions)
 
@@ -130,9 +137,9 @@ for i in range(BUTTONS_PER_LINE):
 
 NUMBER_ANSWER_CHOICES = 4
 
-
+counter = 0 
 #issue: need to figure out a different way to store the correct answers if implementing the randomized questions version
-
+# nov 2nd update: should be solved?
 
 CORRECT_ANSWERS = [[0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0],
@@ -140,23 +147,15 @@ CORRECT_ANSWERS = [[0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0]]
 
-answers = scrape_answers() # pull in the answers data 
 #replace the correct answer placeholders correctly
-
-counter = 0
-
-#wip oct 26
 for i in range(BUTTONS_PER_LINE):
     for j in range(BUTTONS_PER_LINE):
         counter += 1
-        if counter < total_questions:
-            for choice in questions_and_choices[QUESTIONS[i][j]]:
-                print(choice)
-                for k in range(len(answers)):
-                    if answers[k] == choice:
-                        CORRECT_ANSWERS[i][j] = choice.index()
+        CORRECT_ANSWERS[i][j] = answers_list[counter]
 
-print(CORRECT_ANSWERS)
+counter = 0
+
+#oct 31: need to go through the answer choices and remove all the unncessary ones, not sure why they are showing up.
 
 # Define colors of message to indicate completion status.
 BUTTON_COLORS = [[DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR],
@@ -208,7 +207,11 @@ def answerCallback(x_in,y_in,selection,answer_buttons,window):
     for button in answer_buttons:
         button.destroy()
 
-    if selection == CORRECT_ANSWERS[x_in][y_in]:
+    #nov 2nd testing
+    # print(selection)
+    # print(ANSWER_CHOICES[x_in][y_in][selection])
+    # print(CORRECT_ANSWERS[x_in][y_in])
+    if ANSWER_CHOICES[x_in][y_in][selection] == CORRECT_ANSWERS[x_in][y_in]: # made the correct answer selection work properly nov 2nd
         BUTTON_COLORS[x_in][y_in] = CORRECT_COLOR
     else:
         BUTTON_COLORS[x_in][y_in] = INCORRECT_COLOR
