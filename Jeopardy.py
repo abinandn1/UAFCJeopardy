@@ -117,8 +117,11 @@ for question, answers in webscraping_data.items():
     if answers[1]:
         answers_list.append(answers[1][0])
 
+print(answers_list)
+
 total_questions = len(questions)
 
+# \\ TODO: shouldnt this check if BUTTONS_PER_LINE*BUTTONS_PER_LINE > total_questions ? Doesn't the counter below account for the correct number of questions?
 # Ensure BUTTONS_PER_LINE doesn't exceed the total number of questions, so we always have a 5x5 grid 
 if BUTTONS_PER_LINE > total_questions:
     BUTTONS_PER_LINE = total_questions
@@ -140,6 +143,7 @@ NUMBER_ANSWER_CHOICES = 4
 counter = 0 
 #issue: need to figure out a different way to store the correct answers if implementing the randomized questions version
 # nov 2nd update: should be solved?
+# \\ TODO: In testing it seems like some questions have no correct answer, maybe this is related to the oct 31 comment below? Printing out answers_liost, it seems like the correct answer for each question is included in the list, but the order is wrong so some questions have no correct answer?
 
 CORRECT_ANSWERS = [[0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0],
