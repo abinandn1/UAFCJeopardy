@@ -176,12 +176,13 @@ def buttonCallback(x_in,y_in,buttons,labels,window):
             buttons[x][y].destroy()
 
     question_label = tk.Label(text=QUESTIONS[x_in][y_in],
+                              wraplength=GAME_DIMENSION,
                             font=NORMAL_FONT,
                             bg=BACKGROUND_COLOR,
                             fg=TEXT_COLOR)
 
     question_label.place(width=GAME_DIMENSION,
-                         height=TITLE_SIZE,
+                         height=TITLE_SIZE*3,
                          x=0,
                          y=0)
 
@@ -191,6 +192,7 @@ def buttonCallback(x_in,y_in,buttons,labels,window):
 
         answer_buttons[i] = tk.Button(window,
                                text=ANSWER_CHOICES[x_in][y_in][i],
+                               wraplength=GAME_DIMENSION,
                                font=NORMAL_FONT,
                                bg=DEFAULT_COLOR,
                                highlightbackground=DEFAULT_COLOR,
@@ -235,6 +237,7 @@ def createMain(window):
 
         # Create the labels.
         labels[x] = tk.Label(text=LABEL_NAMES[x],
+                             wraplength=BUTTON_DIMENSION,
                             font=NORMAL_FONT,
                             bg=BACKGROUND_COLOR,
                             fg=TEXT_COLOR)
