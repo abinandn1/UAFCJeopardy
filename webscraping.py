@@ -36,6 +36,10 @@ def scrape_questions_and_answers():
                 questions_dict[current_question][0].append(question_text)
                 if cleaned_answers:
                     for cleaned_answer in cleaned_answers:
+                        if current_question == '12. Trivia Question: In Pirates of the Caribbean, what was Captain Jack Sparrow’s ship’s name?': # hardcode fix :(
+                            cleaned_answer = 'The Black Pearl'
+                        if cleaned_answer == "Nixon": # hardcode fix :(
+                            cleaned_answer = 'Richard Nixon'
                         if cleaned_answer in question_text:
                             questions_dict[current_question][1].append(cleaned_answer)
 
@@ -43,5 +47,6 @@ def scrape_questions_and_answers():
 
 def main():
     data = scrape_questions_and_answers()
+    #print(data)
 
 main()

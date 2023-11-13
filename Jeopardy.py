@@ -3,7 +3,7 @@ import tkinter as tk # Used to create game interface.
 from tkinter import messagebox
 from bs4 import BeautifulSoup
 from webscraping import scrape_questions_and_answers
-import random #to allow for randomization of questions pulled for a Jeopardy game 
+import random #to allow for randomization of questions pulled for a Kahoot game 
 ###############################################################################
 #    CONSTANTS:
 ###############################################################################
@@ -117,11 +117,9 @@ for question, answers in webscraping_data.items():
     if answers[1]:
         answers_list.append(answers[1][0])
 
-total_questions = len(questions)
+print(answers_list)
 
-# Ensure BUTTONS_PER_LINE doesn't exceed the total number of questions, so we always have a 5x5 grid 
-if BUTTONS_PER_LINE > total_questions:
-    BUTTONS_PER_LINE = total_questions
+total_questions = len(questions)
 
 counter = 0  # counter to make sure each question + choices placeholders are being swapped with the data properly
 
@@ -140,6 +138,7 @@ NUMBER_ANSWER_CHOICES = 4
 counter = 0 
 #issue: need to figure out a different way to store the correct answers if implementing the randomized questions version
 # nov 2nd update: should be solved?
+# \\ TODO: In testing it seems like some questions have no correct answer, maybe this is related to the oct 31 comment below? Printing out answers_liost, it seems like the correct answer for each question is included in the list, but the order is wrong so some questions have no correct answer?
 
 CORRECT_ANSWERS = [[0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0],
@@ -176,12 +175,13 @@ def buttonCallback(x_in,y_in,buttons,labels,window):
             buttons[x][y].destroy()
 
     question_label = tk.Label(text=QUESTIONS[x_in][y_in],
+                              wraplength=GAME_DIMENSION,
                             font=NORMAL_FONT,
                             bg=BACKGROUND_COLOR,
                             fg=TEXT_COLOR)
 
     question_label.place(width=GAME_DIMENSION,
-                         height=TITLE_SIZE,
+                         height=TITLE_SIZE*3,
                          x=0,
                          y=0)
 
@@ -191,6 +191,7 @@ def buttonCallback(x_in,y_in,buttons,labels,window):
 
         answer_buttons[i] = tk.Button(window,
                                text=ANSWER_CHOICES[x_in][y_in][i],
+                               wraplength=GAME_DIMENSION,
                                font=NORMAL_FONT,
                                bg=DEFAULT_COLOR,
                                highlightbackground=DEFAULT_COLOR,
@@ -235,6 +236,7 @@ def createMain(window):
 
         # Create the labels.
         labels[x] = tk.Label(text=LABEL_NAMES[x],
+                             wraplength=BUTTON_DIMENSION,
                             font=NORMAL_FONT,
                             bg=BACKGROUND_COLOR,
                             fg=TEXT_COLOR)
