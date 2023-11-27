@@ -1,47 +1,33 @@
 from bs4 import BeautifulSoup
 import requests
-import re
 
 def scrape_questions_and_answers():
     questions_dict = {}  # Using a dictionary for questions and answers
-    url = "https://thoughtcatalog.com/january-nelson/2020/04/multiple-choice-trivia-questions-and-answers/"
+    url = "https://abinandn1.github.io/UAFCJeopardy/"
     response = requests.get(url)
+    
+    #check if scraping is allowed 
+    if response.status_code != 200:
+        print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+        return
+    
     soup = BeautifulSoup(response.text, "html.parser")
 
-    questions = soup.find_all('p', {'class': 'p1'})
-    answers = soup.find_all('p', text=re.compile(r'^\d+\.'))
+    question_section = soup.find_all('div', {'class': 'question_box'})
+    for i, trivia_question in enumerate(question_section):
+        
+        #extract the question
+        question = trivia_question.find('h2', {'class': 'question'}).text.strip()
 
-    current_question = None
-    cleaned_answers = []
-    trivia_question = False  # flag trivia questions
+        #extract choices
+        answers = trivia_question.find_all('ul', {'class': 'answers'})[0].find_all('li')
+        choices = [choice.text.strip() for choice in answers]
+        
+        #extract correct answer
+        correct_answer = trivia_question.find('li', {'class': 'correct_answer'}).text.strip()
 
-    for answer in answers:
-        answer_text = answer.text.strip()
-        if "Trivia Question:" in answer_text:
-            trivia_question = True
-            current_question = None  # resets current question
-        else:
-            cleaned_answer = re.sub(r'^\d+\.\s*', '', answer_text)
-            cleaned_answers.append(cleaned_answer)
-            trivia_question = False
-
-    for question in questions:
-        question_text = question.text.strip()
-        if question_text.endswith("?") and not trivia_question:
-            current_question = question_text
-            questions_dict[current_question] = [[], []]
-        elif current_question and not trivia_question:
-            if len(questions_dict[current_question][0]) < 4:
-                question_text= re.sub(r'^[a-d]\) ', '', question_text)
-                questions_dict[current_question][0].append(question_text)
-                if cleaned_answers:
-                    for cleaned_answer in cleaned_answers:
-                        if current_question == '12. Trivia Question: In Pirates of the Caribbean, what was Captain Jack Sparrow’s ship’s name?': # hardcode fix :(
-                            cleaned_answer = 'The Black Pearl'
-                        if cleaned_answer == "Nixon": # hardcode fix :(
-                            cleaned_answer = 'Richard Nixon'
-                        if cleaned_answer in question_text:
-                            questions_dict[current_question][1].append(cleaned_answer)
+        # add question, choices, and correct answer to the dictionary
+        questions_dict[question] = [choices, [correct_answer]]
 
     return questions_dict
 
