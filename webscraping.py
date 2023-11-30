@@ -13,8 +13,8 @@ def scrape_questions_and_answers():
     
     soup = BeautifulSoup(response.text, "html.parser")
 
-    question_section = soup.find_all('div', {'class': 'question_box'})
-    for i, trivia_question in enumerate(question_section):
+    question_sections = soup.find_all('div', {'class': 'question_box'})
+    for trivia_question in question_sections:
         
         #extract the question
         question = trivia_question.find('h2', {'class': 'question'}).text.strip()
@@ -33,6 +33,5 @@ def scrape_questions_and_answers():
 
 def main():
     data = scrape_questions_and_answers()
-    #print(data)
 
 main()
