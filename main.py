@@ -33,7 +33,9 @@ def start(question_number,score):
                          x=0,
                          y=0)
 
-    for i, choice in enumerate(choices[question_number]):
+    for i in range(num_choices):
+
+        choice = (choices[question_number])[i]
 
         choice_button = tk.Button(window,
                                   text=choice,
@@ -42,8 +44,7 @@ def start(question_number,score):
                                   bg="white",
                                   highlightbackground="white",
                                   fg="black",
-                                  command=lambda choice=choice:
-                                  check_answer(choice,question_number,score)
+                                  command=lambda choice=choice: check_answer(choice,question_number,score)
                                   )
 
         choice_button.place(width=GAME_DIMENSION,
@@ -83,9 +84,9 @@ def check_answer(choice,question_number,score):
 
 def next_question(question_number, score):
 
-    # Remove past buttons
-    for child in canvas.winfo_children():
-        child.destroy()
+    # Remove past buttons and labels
+    for item in canvas.winfo_children():
+        item.destroy()
 
     question_number += 1
 
